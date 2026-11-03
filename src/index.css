@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Noto Serif KR", serif;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Japanese Iki & Zen Color Tokens */
+.theme-zen-light,
+.theme-paper,
+.theme-ebook {
+  --zen-bg: #FAF7F2;
+  --zen-card: #FFFFFF;
+  --zen-card-subtle: #F3EFE8;
+  --zen-text-primary: #181818;
+  --zen-text-secondary: #5C5852;
+  --zen-text-muted: #8C877F;
+  --zen-border: rgba(28, 25, 23, 0.08);
+  --zen-border-hover: rgba(28, 25, 23, 0.18);
+  --zen-hanko-red: #C53D33;
+  --zen-hanko-bg: rgba(197, 61, 51, 0.08);
+  --zen-ink-accent: #262626;
+}
+
+.theme-zen-dark,
+.theme-night {
+  --zen-bg: #121212;
+  --zen-card: #1A1A1A;
+  --zen-card-subtle: #242424;
+  --zen-text-primary: #EDEAE3;
+  --zen-text-secondary: #A6A29A;
+  --zen-text-muted: #6E6A63;
+  --zen-border: rgba(255, 255, 255, 0.08);
+  --zen-border-hover: rgba(255, 255, 255, 0.18);
+  --zen-hanko-red: #E05347;
+  --zen-hanko-bg: rgba(224, 83, 71, 0.15);
+  --zen-ink-accent: #E5E5E5;
+}
+
+/* 붉은 낙관 도장 (Hanko Seal Stamp) 스타일 */
+.hanko-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--zen-hanko-red);
+  color: var(--zen-hanko-red);
+  background-color: var(--zen-hanko-bg);
+  border-radius: 6px;
+  font-family: "Noto Serif KR", serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  position: relative;
+  user-select: none;
+}
+
+.hanko-seal::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border: 0.5px solid var(--zen-hanko-red);
+  border-radius: 4px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* 김옥현 법령풀이집 스타일 인라인 하이라이트 */
+.kw {
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-thickness: 2.5px;
+  text-underline-offset: 5px;
+  padding: 0 4px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  color: #1e40af;
+  text-decoration-color: #2563eb;
+  background-color: rgba(37, 99, 235, 0.07);
+}
+
+.theme-night .kw,
+.theme-zen-dark .kw {
+  color: #93c5fd;
+  text-decoration-color: #60a5fa;
+  background-color: rgba(96, 165, 250, 0.15);
+}
+
+.kw-blank {
+  cursor: pointer;
+  color: transparent !important;
+  background-color: rgba(37, 99, 235, 0.15) !important;
+  border-bottom: 2.5px dashed #2563eb;
+  text-decoration: none !important;
+  user-select: none;
+  padding: 2px 12px;
+  margin: 0 2px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.theme-night .kw-blank,
+.theme-zen-dark .kw-blank {
+  background-color: rgba(96, 165, 250, 0.25) !important;
+  border-bottom: 2.5px dashed #60a5fa;
+}
+
+.trap {
+  font-weight: 800;
+  padding: 1px 7px;
+  margin: 0 3px;
+  border-radius: 6px;
+  display: inline-block;
+  color: #b91c1c;
+  background-color: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.theme-night .trap,
+.theme-zen-dark .trap {
+  color: #fca5a5;
+  background-color: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+/* 개정 조문 앵커 */
+.amended-badge {
+  font-weight: 800;
+  padding: 1px 7px;
+  margin: 0 3px;
+  border-radius: 6px;
+  display: inline-block;
+  color: #065f46;
+  background-color: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.theme-night .amended-badge,
+.theme-zen-dark .amended-badge {
+  color: #6ee7b7;
+  background-color: rgba(16, 185, 129, 0.2);
+}
+
+/* 큰글씨 스케일 클래스 */
+.font-scale-sm {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.font-scale-base {
+  font-size: 20px;
+  line-height: 1.85;
+}
+
+.font-scale-lg {
+  font-size: 24px;
+  line-height: 1.9;
+}
+
+.font-scale-xl {
+  font-size: 28px;
+  line-height: 1.95;
+}
+
+/* 부드러운 장 넘김 애니메이션 */
+@keyframes zenFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.zen-fade {
+  animation: zenFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

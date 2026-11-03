@@ -1,0 +1,60 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
+// 법률 상징 저울 + 책을 모티브로 한 세련된 SVG 아이콘
+const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- 배경 둥근 사각형 -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="#334155" stroke-width="6"/>
+
+  <!-- 책 모티브 -->
+  <path d="M110 370 C 170 340, 240 340, 256 360 C 272 340, 342 340, 402 370 L 402 180 C 342 150, 272 150, 256 170 C 240 150, 170 150, 110 180 Z" fill="#334155" opacity="0.6"/>
+  <path d="M120 360 C 175 335, 240 335, 256 352 C 272 335, 337 335, 392 360 L 392 190 C 337 165, 272 165, 256 182 C 240 165, 175 165, 120 190 Z" fill="#475569"/>
+
+  <!-- 저울 기둥 & 천칭 -->
+  <rect x="250" y="110" width="12" height="230" rx="6" fill="url(#gold)"/>
+  <ellipse cx="256" cy="115" rx="18" ry="18" fill="url(#gold)"/>
+  <rect x="146" y="160" width="220" height="10" rx="5" fill="url(#gold)"/>
+  
+  <!-- 좌측 접시 (적법/인정) -->
+  <line x1="166" y1="170" x2="136" y2="240" stroke="#f59e0b" stroke-width="4"/>
+  <line x1="166" y1="170" x2="196" y2="240" stroke="#f59e0b" stroke-width="4"/>
+  <path d="M126 240 Q 166 265 206 240 Z" fill="url(#blue)"/>
+
+  <!-- 우측 접시 (위법/부정) -->
+  <line x1="346" y1="170" x2="316" y2="230" stroke="#f59e0b" stroke-width="4"/>
+  <line x1="346" y1="170" x2="376" y2="230" stroke="#f59e0b" stroke-width="4"/>
+  <path d="M306 230 Q 346 255 386 230 Z" fill="url(#gold)"/>
+
+  <!-- 중앙 뱃지 2027 -->
+  <rect x="186" y="385" width="140" height="44" rx="22" fill="#2563eb"/>
+  <text x="256" y="416" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">2027</text>
+  
+  <!-- 상단 법률 라벨 -->
+  <text x="256" y="80" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="900" fill="#f8fafc" text-anchor="middle" letter-spacing="4">형사소송법</text>
+</svg>`;
+
+const publicDir = path.join(process.cwd(), 'public');
+const iconsDir = path.join(publicDir, 'icons');
+if (!fs.existsSync(iconsDir)) {
+  fs.mkdirSync(iconsDir, { recursive: true });
+}
+
+fs.writeFileSync(path.join(iconsDir, 'icon.svg'), svgContent, 'utf-8');
+fs.writeFileSync(path.join(iconsDir, 'apple-touch-icon.png.svg'), svgContent, 'utf-8');
+console.log('✔ PWA 고화질 SVG 아이콘 생성 완료');
