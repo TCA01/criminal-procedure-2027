@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   X,
   BookOpen,
@@ -10,7 +10,7 @@ import {
   Smartphone,
   ChevronDown,
   ChevronRight,
-  Sparkles,
+  Search,
 } from 'lucide-react';
 import { ActiveTab, CurriculumModuleMeta, ThemeMode, WhyStudyNode } from '../types/criminal';
 
@@ -42,6 +42,20 @@ export const ZenDrawer: React.FC<ZenDrawerProps> = ({
   onOpenInstallModal,
 }) => {
   const [expandedModuleId, setExpandedModuleId] = useState<string>('module1');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const filteredNodes = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return allNodes.filter(
+      (n) =>
+        n.title.toLowerCase().includes(q) ||
+        n.subtitle.toLowerCase().includes(q) ||
+        n.analogyStory.oneSecTranslation.toLowerCase().includes(q) ||
+        n.whyPrinciple.corePhilosophy.toLowerCase().includes(q) ||
+        n.statuteAndCases.some((sc) => sc.title.toLowerCase().includes(q) || sc.keyTakeaway.toLowerCase().includes(q))
+    );
+  }, [allNodes, searchQuery]);
 
   if (!isOpen) return null;
 
@@ -166,11 +180,69 @@ export const ZenDrawer: React.FC<ZenDrawerProps> = ({
           </div>
 
           {/* 7대 모듈 및 56개 단원 목차 */}
-          <div className="space-y-2 pt-2 border-t border-current/10">
-            <div className="text-[11px] font-black tracking-wider uppercase opacity-50 px-2 mb-2">
-              단원 바로가기 (총 56개 단원)
+          <div className="space-y-3 pt-3 border-t border-current/10">
+            <div className="flex items-center justify-between px-2">
+              <span className="text-[11px] font-black tracking-wider uppercase opacity-50">
+                단원 바로가기 (총 56개 단원)
+              </span>
+              <span className="text-[10px] font-mono opacity-50">56 Nodes</span>
             </div>
-            {modulesMeta.map((mod) => {
+
+            {/* 실시간 단원 키워드 검색창 */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 opacity-40" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="단원명, 판례, 조문 키워드 검색..."
+                className={`w-full pl-8 pr-7 py-2 rounded-xl text-xs border focus:outline-none focus:ring-1 focus:ring-[#C53D33] ${
+                  isDark
+                    ? 'bg-[#121212] border-white/10 text-white placeholder-white/30'
+                    : 'bg-white border-black/10 text-black placeholder-black/40'
+                }`}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 opacity-50 hover:opacity-100"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* 검색 결과가 있을 때 */}
+            {searchQuery.trim() !== '' && (
+              <div className="space-y-1 p-2 rounded-xl border border-current/10 bg-current/5 max-h-60 overflow-y-auto">
+                <div className="text-[10px] font-bold opacity-60 px-1 mb-1">
+                  검색 결과 {filteredNodes.length}건
+                </div>
+                {filteredNodes.length === 0 ? (
+                  <div className="text-xs opacity-50 py-3 text-center">일치하는 단원이 없습니다.</div>
+                ) : (
+                  filteredNodes.map((n) => (
+                    <button
+                      key={n.id}
+                      onClick={() => {
+                        setActiveTab('study');
+                        onSelectNode(n.id);
+                        onClose();
+                        setSearchQuery('');
+                      }}
+                      className="w-full text-left p-2 rounded-lg text-xs font-bold hover:bg-[#C53D33] hover:text-white transition-colors flex items-center justify-between"
+                    >
+                      <span className="truncate pr-2">{n.title}</span>
+                      <span className="text-[10px] opacity-70 shrink-0">{n.partLabel}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+
+            {/* 검색어가 없을 때는 기존 7대 모듈 아코디언 표시 */}
+            {searchQuery.trim() === '' &&
+              modulesMeta.map((mod) => {
               const isExpanded = expandedModuleId === mod.id;
               const moduleNodes = allNodes.filter((n) => n.moduleId === mod.id);
 

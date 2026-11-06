@@ -40,8 +40,15 @@ export const ZenStudyView: React.FC<ZenStudyViewProps> = ({
   // OX 퀴즈 풀이 상태
   const [quizAnswers, setQuizAnswers] = useState<Record<number, 'O' | 'X'>>({});
 
-  // 모바일 터치 스와이프 상태
+  // 단원(node) 변경 시 퀴즈 답안 및 빈칸 상태 자동 리셋
+  useEffect(() => {
+    setQuizAnswers({});
+    setRevealedKeywords({});
+  }, [node.id]);
+
+  // 모바일 터치 스와이프 상태 (수평 vs 수직 분리)
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
   const isDark = themeMode === 'night';
   const totalSteps = 4; // 0: 상황극, 1: 왜원리, 2: 조문판례, 3: OX퀴즈
@@ -50,7 +57,7 @@ export const ZenStudyView: React.FC<ZenStudyViewProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      if (e.key === 'ArrowRight' || e.key === ' ') {
+      if (e.key === 'ArrowRight') {
         e.preventDefault();
         handleNext();
       } else if (e.key === 'ArrowLeft') {
@@ -84,21 +91,29 @@ export const ZenStudyView: React.FC<ZenStudyViewProps> = ({
     }
   };
 
-  // 모바일 스와이프 제스처
+  // 모바일 스와이프 제스처 (수직 스크롤과 엄격히 분리하여 오동작 방지)
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
+    setTouchStartY(e.touches[0].clientY);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return;
+    if (touchStartX === null || touchStartY === null) return;
     const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
-    if (diff > 50) {
-      handleNext();
-    } else if (diff < -50) {
-      handlePrev();
+    const touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchStartX - touchEndX;
+    const diffY = touchStartY - touchEndY;
+
+    // 수평 이동이 60px 이상이고 수직 이동의 1.5배 이상일 때만 수평 장 넘김 실행
+    if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      if (diffX > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
     }
     setTouchStartX(null);
+    setTouchStartY(null);
   };
 
   const toggleKeywordReveal = (key: string) => {
@@ -107,7 +122,7 @@ export const ZenStudyView: React.FC<ZenStudyViewProps> = ({
 
   return (
     <div
-      className="min-h-[calc(100vh-4rem)] flex flex-col justify-between max-w-3xl mx-auto px-4 py-6 select-none"
+      className="min-h-[calc(100vh-4rem)] flex flex-col justify-between max-w-3xl mx-auto px-4 py-6"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >

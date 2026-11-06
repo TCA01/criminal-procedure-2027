@@ -238,7 +238,7 @@ export const App: React.FC = () => {
     }
   };
 
-  const currentNode = allStudyNodes[currentNodeIndex];
+  const currentNode = allStudyNodes[currentNodeIndex] || allStudyNodes[0];
 
   const toggleBookmarkNode = (id: string) => {
     setBookmarkedNodeIds((prev) =>
@@ -335,10 +335,14 @@ export const App: React.FC = () => {
             <SubwayFlowMap
               lines={subwayLines}
               themeMode={themeMode}
-              onJumpToModule={(modId: string) => {
+              onJumpToModule={(modId: string, nodeId?: string) => {
                 setActiveTab('study');
-                const modNode = allStudyNodes.find((n) => n.moduleId === modId);
-                if (modNode) handleSelectNodeById(modNode.id);
+                if (nodeId) {
+                  handleSelectNodeById(nodeId);
+                } else {
+                  const modNode = allStudyNodes.find((n) => n.moduleId === modId);
+                  if (modNode) handleSelectNodeById(modNode.id);
+                }
               }}
             />
           </div>
@@ -376,10 +380,14 @@ export const App: React.FC = () => {
               addWrongQuestionId={(id) => setWrongQuestionIds((p) => (p.includes(id) ? p : [...p, id]))}
               removeWrongQuestionId={(id) => setWrongQuestionIds((p) => p.filter((x) => x !== id))}
               clearWrongQuestions={() => setWrongQuestionIds([])}
-              onJumpToModule={(modId: string) => {
+              onJumpToModule={(modId: string, nodeId?: string) => {
                 setActiveTab('study');
-                const modNode = allStudyNodes.find((n) => n.moduleId === modId);
-                if (modNode) handleSelectNodeById(modNode.id);
+                if (nodeId) {
+                  handleSelectNodeById(nodeId);
+                } else {
+                  const modNode = allStudyNodes.find((n) => n.moduleId === modId);
+                  if (modNode) handleSelectNodeById(modNode.id);
+                }
               }}
               searchQuery=""
             />
